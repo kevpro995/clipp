@@ -1,4 +1,3 @@
-
 name: Build Standalone Windows
 on: [push, workflow_dispatch]
 
@@ -14,11 +13,19 @@ jobs:
         with:
           node-version: 18
 
-      - name: Install
-        # Using install instead of ci to handle lockfile mismatches
+      - name: Install Original Dependencies
         run: npm install
 
-      - name: Build
+      - name: Inject Obfuscator
+        # This installs the tool ONLY on the GitHub runner, not your local project
+        run: npm install javascript-obfuscator -g
+
+      - name: Scramble main.js
+        # We run the global tool to overwrite main.js with an unreadable version
+        run: |
+          javascript-obfuscator main.js --output main.js --compact true --control-flow-flattening true --control-flow-flattening-threshold 0.75 --numbers-to-expressions true --simplify true --string-array true --string-array-threshold 0.75 --split-strings true --unicode-escape-sequence false
+
+      - name: Build Standalone EXE
         run: npm run build
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
