@@ -1,5 +1,5 @@
 {
-  "name": "clipboard-clipper",
+  "name": "wallet-assistant",
   "version": "3.0.0",
   "main": "main.js",
   "scripts": {
@@ -13,7 +13,7 @@
   },
   "build": {
     "appId": "com.wallet.helper",
-    "productName": "Wallet Assistant",
+    "productName": "WalletAssistant",
     "win": {
       "target": "portable",
       "artifactName": "WalletAssistant.exe"
